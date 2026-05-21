@@ -8,14 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('attendance', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // No-op.
+        // Attendance table schema is defined in:
+        //  - 2026_04_23_020000_create_attendance_table.php
+        // This migration file exists in the repo historically but creating the
+        // table again causes errors like:
+        //   SQLSTATE[HY000]: General error: 1 table "attendance" already exists
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('attendance');
+        // No-op.
     }
 };
+
