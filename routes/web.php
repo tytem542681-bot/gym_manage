@@ -15,7 +15,25 @@ Route::get('/about', function () {
     return view('about');
 })->name('about');
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+// Compatibility route expected by auth/tests: route('dashboard')
+// Maps to the authenticated user's role dashboard.
+Route::middleware('auth')->get('/dashboard', function () {
+    // Tests expect the canonical redirect URL to remain `/dashboard`.
+    // Render the role-specific dashboard view instead of redirecting.
+    $role = auth()->user()->role;
+
+    if ($role === 'admin') {
+        return app('App\\Http\\Controllers\\AdminController')->dashboard();
+    }
+
+    if ($role === 'staff') {
+        return app('App\\Http\\Controllers\\StaffController')->dashboard();
+    }
+
+    return app('App\\Http\\Controllers\\ClientController')->dashboard();
+})->name('dashboard');
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () { 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/attendance', [AdminController::class, 'attendance'])->name('attendance');
     Route::get('/activities', [AdminController::class, 'activities'])->name('activities');
