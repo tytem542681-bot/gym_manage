@@ -8,8 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Column already exists in create_users_table migration.
+        // Keeping this migration for backwards compatibility.
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('last_login')->nullable();
+            // no-op
         });
     }
 
