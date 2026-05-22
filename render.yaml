@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: gym-manage
+    env: php
+    plan: free
+    branch: main
+    
+    buildCommand: |
+      composer install --no-interaction --prefer-dist
+      npm install
+      npm run build
+      
+    startCommand: |
+      php artisan storage:link
+      php artisan migrate --force
+      php artisan db:seed --class=DatabaseSeeder --force
+      php artisan optimize:clear
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+      php-server -p $PORT
+      
+    envVars:
+      - key: APP_NAME
+        value: "Gym Membership Management System"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
+      - key: ASSET_URL
+        value: https://gym-manage-02ln.onrender.com
+      - key: APP_URL
+        value: https://gym-manage-02ln.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - fromGroup: default
